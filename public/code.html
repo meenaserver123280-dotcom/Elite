@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ELITEPAY — Gift Codes</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black:   #000000;
+    --dark:    #080808;
+    --panel:   #0d0d0d;
+    --border:  #1a1a1a;
+    --yellow:  #f5c400;
+    --yellow2: #ffd93d;
+    --sky:     #00c8f8;
+    --sky2:    #7ee8fa;
+    --success: #00e676;
+    --error:   #ff3d71;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #000;
+    color: var(--sky);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.15) 2px, rgba(0,0,0,.15) 4px);
+    pointer-events: none; z-index: 999;
+  }
+
+  /* ── GRID BG ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,248,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,248,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── GLOW BLOBS ── */
+  .blob { position: fixed; border-radius: 50%; filter: blur(140px); pointer-events: none; z-index: 0; }
+  .blob-y { width: 560px; height: 560px; background: var(--yellow); opacity: .07; top: -180px; left: -180px; }
+  .blob-s { width: 640px; height: 640px; background: var(--sky);    opacity: .07; bottom: -200px; right: -220px; }
+
+  /* ── LAYOUT ── */
+  .page { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* ── HEADER ── */
+  header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 52px;
+    border-bottom: 1px solid #1a1a1a; padding-bottom: 28px;
+  }
+  .logo-mark {
+    width: 46px; height: 46px;
+    background: var(--yellow);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 13px; color: #000;
+    flex-shrink: 0;
+  }
+  .brand { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: .14em; color: var(--sky); }
+  .brand span { color: var(--yellow); }
+  .brand sub { font-size: 9px; color: var(--sky2); opacity: .7; letter-spacing: .22em; display: block; margin-top: -2px; }
+  .header-badge {
+    margin-left: auto;
+    background: #000; color: var(--yellow);
+    border: 1px solid var(--yellow);
+    font-family: 'Orbitron', sans-serif; font-size: 9px; font-weight: 900;
+    padding: 5px 14px; border-radius: 2px; letter-spacing: .22em;
+  }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 36px; }
+  .tab {
+    flex: 1; padding: 14px 20px;
+    background: var(--panel); border: 1px solid #1a1a1a;
+    color: #2a4a55; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
+    letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+    transition: all .2s; position: relative; overflow: hidden;
+  }
+  .tab::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--yellow); transform: scaleX(0); transition: transform .25s;
+  }
+  .tab:hover { color: var(--sky); border-color: #252525; }
+  .tab.active { color: var(--sky); border-color: var(--sky); background: rgba(0,200,248,.04); }
+  .tab.active::after { transform: scaleX(1); background: var(--yellow); }
+
+  /* ── PANELS ── */
+  .panel { display: none; animation: fadeUp .3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--panel); border: 1px solid #181818;
+    border-radius: 4px; padding: 36px 40px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--yellow);
+  }
+  .card-title {
+    font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 12px;
+    letter-spacing: .2em; color: var(--sky); text-transform: uppercase;
+    margin-bottom: 32px; display: flex; align-items: center; gap: 10px;
+  }
+  .card-title::before { content: '//'; color: var(--yellow); }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--sky); opacity: .55;
+  }
+
+  input {
+    background: #000; border: 1px solid #1e1e1e;
+    color: var(--sky); font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600;
+    padding: 14px 16px; border-radius: 3px; outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    caret-color: var(--yellow);
+  }
+  input:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px rgba(245,196,0,.1);
+    color: var(--sky2);
+  }
+  input::placeholder { color: #1c3540; }
+  input[id="redeemCode"], input[id="giftCode"] {
+    font-family: 'Orbitron', monospace; font-size: 14px; letter-spacing: .14em; text-transform: uppercase;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 40px; border: none; cursor: pointer;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 12px; letter-spacing: .22em;
+    text-transform: uppercase; border-radius: 3px; transition: all .2s;
+    position: relative; overflow: hidden;
+  }
+  /* BOTH buttons: yellow background, black text */
+  .btn-primary, .btn-sky {
+    background: var(--yellow);
+    color: #000;
+    box-shadow: 0 0 0 rgba(245,196,0,0);
+  }
+  .btn-primary:hover, .btn-sky:hover {
+    background: var(--yellow2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(245,196,0,.4);
+  }
+  .btn:active { transform: translateY(0); }
+  .btn-wrap { margin-top: 28px; }
+
+  /* ── REDEEM HERO ── */
+  .redeem-hero {
+    display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 20px 0;
+  }
+  .redeem-icon {
+    width: 72px; height: 72px;
+    border: 1px solid #1e1e1e; border-radius: 50%;
+    background: #080808;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+    box-shadow: 0 0 30px rgba(245,196,0,.08);
+  }
+  .redeem-hero p { color: var(--sky); opacity: .5; font-size: 14px; letter-spacing: .06em; text-align: center; }
+  .redeem-hero input {
+    width: 100%; max-width: 440px; text-align: center;
+    font-size: 22px; letter-spacing: .35em; padding: 20px;
+  }
+
+  /* ── ALERT ── */
+  .alert {
+    padding: 14px 18px; border-radius: 3px; font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px; margin-top: 20px; border-left: 3px solid;
+  }
+  .alert-success { background: rgba(0,230,118,.06); border-color: var(--success); color: var(--success); }
+  .alert-error   { background: rgba(255,61,113,.06); border-color: var(--error);   color: var(--error); }
+  .alert { display: none; }
+  .alert.show { display: flex; animation: fadeUp .25s ease; }
+
+  /* ── RESULT CARD ── */
+  .result-badge {
+    display: none; margin-top: 28px;
+    background: #060606; border: 1px solid #1e1e1e; border-radius: 4px;
+    padding: 24px 28px; border-left: 3px solid var(--yellow);
+  }
+  .result-badge.show { display: block; animation: fadeUp .3s ease; }
+  .result-badge .rb-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .22em; color: var(--sky); opacity: .4;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .result-badge .rb-value {
+    font-family: 'Orbitron', sans-serif; font-size: 36px; font-weight: 900;
+    color: var(--yellow);
+  }
+  .result-badge .rb-code {
+    font-family: 'Orbitron', monospace; font-size: 13px; letter-spacing: .22em;
+    color: var(--sky); margin-top: 10px; background: #000;
+    border: 1px solid #1a1a1a;
+    display: inline-block; padding: 6px 14px; border-radius: 3px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: #141414; margin: 40px 0; }
+
+  /* ── INFO ROW ── */
+  .info-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .info-chip {
+    background: #000; border: 1px solid #1a1a1a;
+    padding: 8px 16px; border-radius: 2px;
+    font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--sky); opacity: .6;
+  }
+  .info-chip b { color: var(--sky); opacity: 1; }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width: 16px; height: 16px; border: 2px solid rgba(0,0,0,.4);
+    border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .card { padding: 24px 20px; }
+    .brand { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob blob-y"></div>
+<div class="blob blob-s"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-mark">EP</div>
+    <div class="brand">
+      ELITE<span>PAY</span>
+      <sub>GIFT CODE SYSTEM</sub>
+    </div>
+    <div class="header-badge">v2.0 LIVE</div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('redeem', this)">🎁 Redeem Code</button>
+    <button class="tab" onclick="switchTab('create', this)">⚙️ Create Code</button>
+  </div>
+
+  <!-- REDEEM PANEL -->
+  <div class="panel active" id="panel-redeem">
+    <div class="card">
+      <div class="card-title">Redeem Gift Code</div>
+
+      <div class="redeem-hero">
+        <div class="redeem-icon">🎁</div>
+        <p style="color:var(--sky);opacity:.45;font-size:14px;letter-spacing:.05em;text-align:center;">Enter your gift code below to instantly credit your wallet</p>
+        <input type="text" name="redeem-code" id="redeemCode" placeholder="ENTER CODE" maxlength="32" oninput="this.value=this.value.toUpperCase()"/>
+      </div>
+
+      <div style="display:flex;justify-content:center;" class="btn-wrap">
+        <button class="btn btn-primary" onclick="redeemCode()">
+          <span class="spinner" id="redeem-spin"></span>
+          <span id="redeem-btn-text">REDEEM NOW</span>
+        </button>
+      </div>
+
+      <div class="alert alert-success" id="redeem-success">
+        <span>✅</span>
+        <span id="redeem-success-msg">Code redeemed successfully!</span>
+      </div>
+      <div class="alert alert-error" id="redeem-error">
+        <span>⚠️</span>
+        <span id="redeem-error-msg">Something went wrong.</span>
+      </div>
+
+      <div class="result-badge" id="redeem-result">
+        <div class="rb-label">Amount Added to Wallet</div>
+        <div class="rb-value" id="rb-amount">₹0.00</div>
+        <div><span class="rb-code" id="rb-code-display">—</span></div>
+        <div style="margin-top:14px;font-size:13px;color:var(--sky);opacity:.5;">✅ Balance updated successfully. Check your wallet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE PANEL -->
+  <div class="panel" id="panel-create">
+    <div class="card">
+      <div class="card-title">Create Gift Code — Admin</div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Admin Secret Key</label>
+          <input type="password" id="adminKey" placeholder="••••••••••••"/>
+        </div>
+        <div class="form-group">
+          <label>Gift Code</label>
+          <input type="text" id="giftCode" placeholder="ELITE2024" maxlength="32" oninput="this.value=this.value.toUpperCase()"/>
+        </div>
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <input type="number" id="giftAmount" placeholder="500" min="1" step="0.01"/>
+        </div>
+        <div class="form-group">
+          <label>Max Uses</label>
+          <input type="number" id="maxUses" placeholder="1" min="1"/>
+        </div>
+      </div>
+
+      <div class="btn-wrap">
+        <button class="btn btn-sky" onclick="createCode()">
+          <span class="spinner" id="create-spin"></span>
+          <span id="create-btn-text">GENERATE CODE</span>
+        </button>
+      </div>
+
+      <div class="alert alert-success" id="create-success">
+        <span>✅</span>
+        <span id="create-success-msg">Code created!</span>
+      </div>
+      <div class="alert alert-error" id="create-error">
+        <span>⚠️</span>
+        <span id="create-error-msg">Something went wrong.</span>
+      </div>
+
+      <div class="result-badge" id="create-result">
+        <div class="rb-label">Code Created Successfully</div>
+        <div class="rb-code" id="cr-code" style="font-size:20px;letter-spacing:.3em;color:var(--yellow);background:transparent;padding:0;margin-bottom:8px;">—</div>
+        <div class="info-row" id="cr-info"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  function switchTab(id, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  function setLoading(spinId, btnId, loading) {
+    document.getElementById(spinId).style.display = loading ? 'block' : 'none';
+    document.getElementById(btnId).style.opacity  = loading ? '0' : '1';
+  }
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    document.getElementById(id + '-msg').textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+  function hideAlerts(prefix) {
+    ['success','error'].forEach(t => document.getElementById(prefix+'-'+t).classList.remove('show'));
+  }
+
+  async function redeemCode() {
+    const code = document.getElementById('redeemCode').value.trim();
+    if (!code) { showAlert('redeem-error', 'Please enter a gift code.'); return; }
+    hideAlerts('redeem');
+    document.getElementById('redeem-result').classList.remove('show');
+    setLoading('redeem-spin','redeem-btn-text', true);
+    try {
+      const res  = await fetch('/api/giftcode/redeem', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ code })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        document.getElementById('rb-amount').textContent = '₹' + data.amount;
+        document.getElementById('rb-code-display').textContent = code;
+        document.getElementById('redeem-result').classList.add('show');
+        showAlert('redeem-success', data.message || 'Code redeemed!');
+        document.getElementById('redeemCode').value = '';
+      } else {
+        showAlert('redeem-error', data.message || 'Redemption failed.');
+      }
+    } catch(e) {
+      showAlert('redeem-error', 'Network error. Please try again.');
+    }
+    setLoading('redeem-spin','redeem-btn-text', false);
+  }
+
+  async function createCode() {
+    const key    = document.getElementById('adminKey').value.trim();
+    const code   = document.getElementById('giftCode').value.trim();
+    const amount = document.getElementById('giftAmount').value.trim();
+    const maxUses= document.getElementById('maxUses').value.trim();
+    const expHrs = document.getElementById('expiresHours').value.trim();
+    if (!key || !code || !amount) { showAlert('create-error', 'Key, code, and amount are required.'); return; }
+    hideAlerts('create');
+    document.getElementById('create-result').classList.remove('show');
+    setLoading('create-spin','create-btn-text', true);
+    try {
+      const res  = await fetch('/api/giftcode/create', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ key, code, amount, max_uses: maxUses || 1, expires_hours: expHrs || undefined })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        document.getElementById('cr-code').textContent = data.code;
+        document.getElementById('cr-info').innerHTML =
+          `<div class="info-chip">Amount <b>₹${data.amount}</b></div>` +
+          `<div class="info-chip">Max Uses <b>${data.max_uses}</b></div>` +
+          (expHrs ? `<div class="info-chip">Expires In <b>${expHrs}h</b></div>` : `<div class="info-chip">Expiry <b>Never</b></div>`);
+        document.getElementById('create-result').classList.add('show');
+        showAlert('create-success', `Code "${data.code}" created successfully!`);
+      } else {
+        showAlert('create-error', data.message || 'Creation failed.');
+      }
+    } catch(e) {
+      showAlert('create-error', 'Network error. Please try again.');
+    }
+    setLoading('create-spin','create-btn-text', false);
+  }
+
+  // Enter key triggers redeem
+  document.getElementById('redeemCode').addEventListener('keydown', e => {
+    if (e.key === 'Enter') redeemCode();
+  });
+</script>
+</body>
+</html>
+
