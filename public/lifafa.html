@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lifafa | ElitePay</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0f;--black2:#111118;--black3:#1a1a24;
+  --yellow:#fbbf24;--yellow2:#f59e0b;
+  --sky:#38bdf8;--sky2:#0ea5e9;
+  --white:#ffffff;--muted:#64748b;--border:#2a2a38;--red:#f87171;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:var(--black);color:var(--white);min-height:100vh;padding-bottom:2rem;}
+
+.topbar{
+  background:var(--black2);border-bottom:1px solid var(--border);
+  padding:0.9rem 1.1rem;display:flex;align-items:center;gap:0.85rem;
+  position:sticky;top:0;z-index:100;
+}
+.back-btn{
+  width:38px;height:38px;border-radius:12px;
+  background:var(--black3);border:1px solid var(--border);
+  color:var(--muted);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.9rem;flex-shrink:0;
+}
+.tb-title{font-size:1rem;font-weight:900;color:var(--white);}
+.tb-sub{font-size:0.62rem;color:var(--muted);font-weight:600;}
+
+/* TABS */
+.tabs{
+  display:flex;background:var(--black2);border-bottom:1px solid var(--border);
+  position:sticky;top:57px;z-index:99;
+}
+.tab{
+  flex:1;padding:0.85rem 0;text-align:center;font-size:0.78rem;
+  font-weight:800;color:var(--muted);cursor:pointer;
+  border-bottom:3px solid transparent;transition:all 0.15s;
+}
+.tab.on{color:var(--yellow);border-bottom-color:var(--yellow);}
+
+.wrap{padding:1rem;max-width:480px;margin:0 auto;}
+.pane{display:none;}
+.pane.on{display:block;}
+
+/* CARDS */
+.card{
+  background:var(--black2);border:1px solid var(--border);
+  border-radius:20px;padding:1.3rem;margin-bottom:1rem;
+}
+.card-title{
+  font-size:0.88rem;font-weight:900;color:var(--white);
+  margin-bottom:1.1rem;display:flex;align-items:center;gap:0.5rem;
+}
+
+/* INPUTS */
+.f-row{margin-bottom:0.9rem;}
+.f-lbl{font-size:0.68rem;font-weight:800;color:var(--muted);margin-bottom:5px;display:block;}
+.f-inp{
+  width:100%;padding:0.85rem 1rem;
+  background:var(--black3);border:2px solid var(--border);
+  border-radius:13px;font-size:0.92rem;outline:none;
+  color:var(--white);font-family:inherit;transition:border 0.2s;
+}
+.f-inp:focus{border-color:var(--yellow);}
+.f-inp::placeholder{color:var(--muted);}
+.f-sel{
+  width:100%;padding:0.85rem 1rem;
+  background:var(--black3);border:2px solid var(--border);
+  border-radius:13px;font-size:0.92rem;outline:none;
+  color:var(--white);font-family:inherit;
+}
+.f-sel:focus{border-color:var(--yellow);}
+
+/* TYPE CHIPS */
+.type-chips{display:flex;gap:0.5rem;margin-bottom:0.9rem;}
+.type-chip{
+  flex:1;padding:0.65rem 0.5rem;border-radius:12px;
+  background:var(--black3);border:2px solid var(--border);
+  color:var(--muted);font-weight:800;font-size:0.72rem;
+  cursor:pointer;font-family:inherit;text-align:center;
+  transition:all 0.15s;
+}
+.type-chip.on{background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.4);color:var(--yellow);}
+.type-chip:active{transform:scale(0.95);}
+
+/* BAL STRIP */
+.bal-strip{
+  background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.03));
+  border:1px solid rgba(251,191,36,0.2);border-radius:14px;
+  padding:0.9rem 1rem;margin-bottom:1rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.bs-k{font-size:0.62rem;color:var(--muted);font-weight:700;}
+.bs-v{font-size:1.2rem;font-weight:900;color:var(--yellow);}
+
+/* FUND PREVIEW */
+.fund-preview{
+  background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.18);
+  border-radius:13px;padding:0.85rem 1rem;margin-bottom:0.9rem;
+  font-size:0.78rem;color:var(--muted);font-weight:700;display:none;
+}
+.fund-preview b{color:var(--sky);}
+
+/* SUBMIT */
+.sub-btn{
+  width:100%;padding:1rem;border-radius:14px;
+  background:linear-gradient(135deg,var(--yellow),var(--yellow2));
+  border:none;color:var(--black);font-weight:900;font-size:0.95rem;
+  cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 20px rgba(251,191,36,0.3);transition:transform 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.sub-btn:active{transform:scale(0.97);}
+.sub-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* CLAIM CARD */
+.claim-card{
+  background:linear-gradient(135deg,#16162a,#0d0d18);
+  border:1px solid #2a2a42;border-radius:20px;
+  padding:1.5rem;margin-bottom:1rem;text-align:center;
+  position:relative;overflow:hidden;
+}
+.claim-card::before{
+  content:'🧧';position:absolute;right:-10px;top:-10px;
+  font-size:5rem;opacity:0.08;
+}
+.cc-code{
+  display:inline-block;background:rgba(251,191,36,0.1);
+  border:1px solid rgba(251,191,36,0.3);
+  border-radius:10px;padding:4px 14px;
+  font-size:0.7rem;font-weight:800;color:var(--yellow);
+  letter-spacing:1px;margin-bottom:0.5rem;
+}
+.cc-type{font-size:2rem;margin-bottom:0.3rem;}
+.cc-name{font-size:0.85rem;font-weight:800;color:var(--white);margin-bottom:0.3rem;}
+.cc-amt{font-size:2.2rem;font-weight:900;color:var(--yellow);letter-spacing:-1px;}
+.cc-amt sup{font-size:1rem;opacity:0.65;}
+.cc-meta{
+  display:flex;justify-content:center;gap:1rem;
+  margin-top:0.75rem;flex-wrap:wrap;
+}
+.cc-m{font-size:0.68rem;color:var(--muted);font-weight:700;}
+.cc-m b{color:var(--white);}
+
+/* PROGRESS BAR */
+.prog-wrap{margin:0.75rem 0;background:var(--black3);border-radius:100px;height:6px;overflow:hidden;}
+.prog-bar{height:100%;border-radius:100px;background:linear-gradient(135deg,var(--yellow),var(--sky));transition:width 0.5s;}
+
+/* CLAIM FORM */
+.claim-form{margin-bottom:1rem;}
+
+/* TOSS BTNS */
+.toss-btns{display:flex;gap:0.75rem;margin-top:0.5rem;}
+.toss-btn{
+  flex:1;padding:0.75rem;border-radius:12px;
+  background:var(--black3);border:2px solid var(--border);
+  color:var(--muted);font-weight:800;font-size:0.85rem;
+  cursor:pointer;font-family:inherit;transition:all 0.15s;text-align:center;
+}
+.toss-btn.on{background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.4);color:var(--yellow);}
+.toss-btn:active{transform:scale(0.95);}
+
+/* SUCCESS */
+#claim-success{
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);
+  z-index:999;display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#claim-success.open{display:flex;}
+.cs-box{
+  background:var(--black2);border:1px solid var(--border);
+  border-radius:28px;padding:2rem 1.5rem;width:100%;max-width:340px;
+  text-align:center;animation:zoomIn 0.3s cubic-bezier(.34,1.2,.64,1);
+}
+@keyframes zoomIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:none}}
+.cs-tick{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,#10b981,#059669);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;font-size:1.7rem;color:white;
+  box-shadow:0 8px 24px rgba(16,185,129,0.4);
+}
+.cs-amt{font-size:2.5rem;font-weight:900;color:var(--yellow);letter-spacing:-1.5px;}
+.cs-amt sup{font-size:1.1rem;opacity:0.65;}
+.cs-msg{font-size:0.8rem;color:var(--muted);font-weight:700;margin:0.5rem 0 1.2rem;}
+.cs-btn{
+  width:100%;padding:0.95rem;border-radius:14px;
+  background:linear-gradient(135deg,var(--yellow),var(--yellow2));
+  border:none;color:var(--black);font-weight:900;font-size:0.95rem;
+  cursor:pointer;font-family:inherit;
+}
+
+.warn-box{
+  background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.18);
+  border-radius:13px;padding:0.8rem 1rem;margin-bottom:0.9rem;
+  font-size:0.7rem;color:var(--red);font-weight:700;line-height:1.6;
+}
+.empty{text-align:center;padding:2.5rem;color:var(--muted);}
+.empty i{font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.2;}
+.loading{text-align:center;padding:2rem;color:var(--muted);font-weight:700;}
+
+.divider{height:1px;background:var(--border);margin:0.8rem 0;}
+
+.info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.78rem;padding:0.5rem 0;border-bottom:1px solid var(--border);
+  color:var(--muted);font-weight:700;
+}
+.info-row:last-child{border-bottom:none;}
+.info-row b{color:var(--white);font-weight:800;}
+
+.share-btn{
+  width:100%;padding:0.85rem;border-radius:13px;margin-top:0.6rem;
+  background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);
+  color:var(--sky);font-weight:800;font-size:0.85rem;
+  cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+  <div>
+    <div class="tb-title">🧧 Lifafa</div>
+    <div class="tb-sub">Create & Claim gift envelopes</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" id="tab-claim" onclick="goTab('claim')">🎁 Claim</div>
+  <div class="tab" id="tab-create" onclick="goTab('create')">✨ Create</div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ CLAIM ══ -->
+  <div class="pane on" id="pane-claim">
+
+    <!-- Code Input -->
+    <div class="card" id="code-card">
+      <div class="card-title"><i class="fa-solid fa-magnifying-glass" style="color:var(--yellow)"></i> Enter Lifafa Code</div>
+      <div class="f-row">
+        <input class="f-inp" id="cl-code" placeholder="Code daalo (e.g. DIWALI25)"
+          style="text-transform:uppercase;letter-spacing:1px;text-align:center;font-size:1.1rem;font-weight:900;"
+          oninput="this.value=this.value.toUpperCase()"
+          onkeydown="if(event.key==='Enter')fetchLifafa()" />
+      </div>
+      <button class="sub-btn" onclick="fetchLifafa()">
+        <i class="fa-solid fa-search"></i> Find Lifafa
+      </button>
+    </div>
+
+    <!-- Lifafa Detail -->
+    <div id="lifafa-detail" style="display:none;">
+
+      <div class="claim-card" id="lf-card">
+        <div class="cc-code" id="lf-code">—</div>
+        <div class="cc-type" id="lf-type-ico">🧧</div>
+        <div class="cc-name" id="lf-creator">—</div>
+        <div class="cc-amt"><sup>₹</sup><span id="lf-amt">0</span></div>
+        <div class="prog-wrap">
+          <div class="prog-bar" id="lf-prog" style="width:0%"></div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-m">Fund: <b id="lf-fund">—</b></div>
+          <div class="cc-m">Remaining: <b id="lf-rem">—</b></div>
+          <div class="cc-m">Type: <b id="lf-type">—</b></div>
+        </div>
+      </div>
+
+      <!-- Claim Form -->
+      <div class="card claim-form">
+        <div class="card-title"><i class="fa-solid fa-mobile-screen" style="color:var(--sky)"></i> Claim Karo</div>
+
+        <div class="f-row">
+          <label class="f-lbl">Mobile Number</label>
+          <input class="f-inp" id="cl-mobile" type="tel" maxlength="10" placeholder="Registered mobile number" />
+        </div>
+
+        <!-- Access Code (shown if needed) -->
+        <div class="f-row" id="ac-row" style="display:none;">
+          <label class="f-lbl">🔐 Access Code</label>
+          <input class="f-inp" id="cl-ac" placeholder="Access code daalo"
+            style="text-transform:uppercase;letter-spacing:1px;" oninput="this.value=this.value.toUpperCase()" />
+        </div>
+
+        <!-- Toss (shown if toss type) -->
+        <div id="toss-row" style="display:none;margin-bottom:0.9rem;">
+          <label class="f-lbl">🪙 Heads ya Tails?</label>
+          <div class="toss-btns">
+            <button class="toss-btn" id="toss-h" onclick="selectToss('HEADS')">🪙 Heads</button>
+            <button class="toss-btn" id="toss-t" onclick="selectToss('TAILS')">🔄 Tails</button>
+          </div>
+        </div>
+
+        <button class="sub-btn" id="claim-btn" onclick="doClaim()">
+          <i class="fa-solid fa-gift"></i> Claim Lifafa
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ CREATE ══ -->
+  <div class="pane" id="pane-create">
+
+    <div class="bal-strip">
+      <div>
+        <div class="bs-k">Your Balance</div>
+        <div class="bs-v">₹<span id="cr-bal">0</span></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="bs-k">Wallet</div>
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted)" id="cr-wid">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--yellow)"></i> Create Lifafa</div>
+
+      <!-- Type -->
+      <div class="f-row">
+        <label class="f-lbl">Type *</label>
+        <div class="type-chips">
+          <button class="type-chip on" id="tc-standard" onclick="setType('standard')">💰 Standard</button>
+          <button class="type-chip" id="tc-scratch" onclick="setType('scratch')">🎰 Scratch</button>
+          <button class="type-chip" id="tc-toss" onclick="setType('toss')">🪙 Toss</button>
+        </div>
+      </div>
+
+      <!-- Code -->
+      <div class="f-row">
+        <label class="f-lbl">Lifafa Code *</label>
+        <input class="f-inp" id="cr-code" placeholder="e.g. DIWALI25 (unique)"
+          style="text-transform:uppercase;letter-spacing:1px;"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');calcFund()" />
+      </div>
+
+      <!-- Standard / Toss -->
+      <div id="cr-std-fields">
+        <div class="f-row">
+          <label class="f-lbl">Amount per User (₹) *</label>
+          <input class="f-inp" id="cr-amt" type="number" placeholder="e.g. 10" oninput="calcFund()" />
+        </div>
+      </div>
+
+      <!-- Scratch -->
+      <div id="cr-scratch-fields" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+          <div class="f-row">
+            <label class="f-lbl">Min Amount (₹)</label>
+            <input class="f-inp" id="cr-min" type="number" placeholder="1" oninput="calcFund()" />
+          </div>
+          <div class="f-row">
+            <label class="f-lbl">Max Amount (₹)</label>
+            <input class="f-inp" id="cr-max" type="number" placeholder="50" oninput="calcFund()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Toss Answer -->
+      <div id="cr-toss-fields" style="display:none;">
+        <div class="f-row">
+          <label class="f-lbl">Correct Answer</label>
+          <div class="toss-btns">
+            <button class="toss-btn" id="ans-h" onclick="setAns('HEADS')">🪙 Heads</button>
+            <button class="toss-btn" id="ans-t" onclick="setAns('TAILS')">🔄 Tails</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users -->
+      <div class="f-row">
+        <label class="f-lbl">Max Users *</label>
+        <input class="f-inp" id="cr-users" type="number" placeholder="e.g. 100" oninput="calcFund()" />
+      </div>
+
+      <!-- Refer Bonus -->
+      <div class="f-row">
+        <label class="f-lbl">Refer Bonus (₹) <span style="color:var(--muted);font-weight:600">optional</span></label>
+        <input class="f-inp" id="cr-ref" type="number" placeholder="0" />
+      </div>
+
+      <!-- Access Code -->
+      <div class="f-row">
+        <label class="f-lbl">Access Code <span style="color:var(--muted);font-weight:600">optional — private lifafa ke liye</span></label>
+        <input class="f-inp" id="cr-ac" placeholder="e.g. SECRET123"
+          style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()" />
+      </div>
+
+      <!-- Fund Preview -->
+      <div class="fund-preview" id="fund-preview">
+        💸 Total Fund: <b>₹<span id="fp-total">0</span></b> deduct hoga tumhare balance se
+      </div>
+
+      <div class="warn-box">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Fund create karte waqt <b>turant deduct</b> hoga.<br>
+        Code unique hona chahiye — duplicate nahi chalega.
+      </div>
+
+      <button class="sub-btn" id="cr-btn" onclick="createLifafa()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Create Lifafa
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLAIM SUCCESS -->
+<div id="claim-success">
+  <div class="cs-box">
+    <div class="cs-tick"><i class="fa-solid fa-gift"></i></div>
+    <div style="font-size:1rem;font-weight:900;margin-bottom:0.3rem;">🎉 Claimed!</div>
+    <div class="cs-amt"><sup>₹</sup><span id="cs-amt">0</span></div>
+    <div class="cs-msg">Balance mein add ho gaya! ✅</div>
+    <button class="cs-btn" onclick="document.getElementById('claim-success').classList.remove('open')">
+      Done
+    </button>
+  </div>
+</div>
+
+<!-- CREATE SUCCESS -->
+<div id="create-success"
+  style="position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:999;display:none;align-items:center;justify-content:center;padding:1rem;">
+  <div class="cs-box">
+    <div class="cs-tick" style="background:linear-gradient(135deg,var(--yellow),var(--yellow2));box-shadow:0 8px 24px rgba(251,191,36,0.4);">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <div style="font-size:1rem;font-weight:900;margin-bottom:0.3rem;">Lifafa Created! 🧧</div>
+    <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:1.2rem;">Share karo aur loot karwao!</div>
+
+    <div style="background:var(--black3);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:1rem;">
+      <div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-bottom:4px;">Lifafa Code</div>
+      <div style="font-size:1.5rem;font-weight:900;color:var(--yellow);letter-spacing:2px;" id="done-code">—</div>
+    </div>
+
+    <div style="background:var(--black3);border:1px solid var(--border);border-radius:14px;padding:0.9rem;margin-bottom:1rem;font-size:0.75rem;color:var(--muted);word-break:break-all;" id="done-link">—</div>
+
+    <button class="share-btn" onclick="shareLifafa()">
+      <i class="fa-solid fa-share-nodes"></i> Share Link
+    </button>
+    <button class="cs-btn" style="margin-top:0.6rem;" onclick="document.getElementById('create-success').style.display='none'">
+      Done
+    </button>
+  </div>
+</div>
+
+<script>
+const API   = '';
+const token = localStorage.getItem('ep_token') || localStorage.getItem('token') || '';
+const user  = JSON.parse(localStorage.getItem('ep_user') || localStorage.getItem('user') || '{}');
+if (!token) window.location.href = 'index.html';
+
+let lf        = null;
+let selType   = 'standard';
+let selToss   = '';
+let selAns    = '';
+let doneCode  = '';
+let doneLink  = '';
+
+// ── LOAD BALANCE ──────────────────────────────────────────────────────────────
+async function loadBal() {
+  try {
+    const r = await fetch(API + '/wallet/balance', { headers:{ Authorization:'Bearer '+token } });
+    const d = await r.json();
+    if (d.status === 'success') {
+      document.getElementById('cr-bal').textContent = parseFloat(d.balance).toFixed(2);
+      document.getElementById('cr-wid').textContent = d.wallet_id || '—';
+    }
+  } catch(e) {}
+}
+loadBal();
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function goTab(name) {
+  ['claim','create'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('on', t===name);
+    document.getElementById('pane-'+t).classList.toggle('on', t===name);
+  });
+  if (name === 'create') loadBal();
+}
+
+// ── CLAIM: FETCH LIFAFA ───────────────────────────────────────────────────────
+async function fetchLifafa() {
+  const code = document.getElementById('cl-code').value.trim().toUpperCase();
+  if (!code) { alert('Code daalo'); return; }
+
+  const btn = document.querySelector('#code-card .sub-btn');
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching...';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(API + '/lifafa/' + code);
+    const d = await r.json();
+
+    if (d.status !== 'success') {
+      alert('❌ ' + d.message);
+      btn.innerHTML = '<i class="fa-solid fa-search"></i> Find Lifafa';
+      btn.disabled = false;
+      return;
+    }
+
+    lf = d.lifafa;
+    renderLifafa(lf);
+    document.getElementById('lifafa-detail').style.display = 'block';
+    document.getElementById('lifafa-detail').scrollIntoView({ behavior:'smooth' });
+  } catch(e) { alert('Network error'); }
+
+  btn.innerHTML = '<i class="fa-solid fa-search"></i> Find Lifafa';
+  btn.disabled = false;
+}
+
+function renderLifafa(l) {
+  const typeIco = l.type==='scratch' ? '🎰' : l.type==='toss' ? '🪙' : '🧧';
+  const perAmt  = l.per_user_amount > 0 ? l.per_user_amount : l.max_range;
+  const amtTxt  = l.type==='scratch' ? `${l.min_range}–${l.max_range}` : perAmt;
+  const prog    = l.total_fund > 0 ? Math.min(100, (l.total_used / l.total_fund) * 100) : 0;
+
+  document.getElementById('lf-code').textContent    = l.code;
+  document.getElementById('lf-type-ico').textContent = typeIco;
+  document.getElementById('lf-creator').textContent  = 'by ' + (l.creator_id?.name || 'Unknown');
+  document.getElementById('lf-amt').textContent      = amtTxt;
+  document.getElementById('lf-fund').textContent     = '₹' + (l.total_fund || 0);
+  document.getElementById('lf-rem').textContent      = '₹' + (l.remaining || 0);
+  document.getElementById('lf-type').textContent     = l.type.toUpperCase();
+  document.getElementById('lf-prog').style.width     = prog + '%';
+
+  // Access code
+  document.getElementById('ac-row').style.display = l.has_access_code ? 'block' : 'none';
+  // Toss
+  document.getElementById('toss-row').style.display = l.type==='toss' ? 'block' : 'none';
+  selToss = '';
+}
+
+// ── TOSS SELECT ───────────────────────────────────────────────────────────────
+function selectToss(v) {
+  selToss = v;
+  document.getElementById('toss-h').classList.toggle('on', v==='HEADS');
+  document.getElementById('toss-t').classList.toggle('on', v==='TAILS');
+}
+
+// ── DO CLAIM ──────────────────────────────────────────────────────────────────
+async function doClaim() {
+  const code   = document.getElementById('cl-code').value.trim().toUpperCase();
+  const mobile = document.getElementById('cl-mobile').value.trim();
+  const ac     = document.getElementById('cl-ac').value.trim().toUpperCase();
+
+  if (!mobile || mobile.length !== 10) { alert('10 digit mobile number daalo'); return; }
+  if (lf?.type === 'toss' && !selToss) { alert('Heads ya Tails select karo'); return; }
+  if (lf?.has_access_code && !ac) { alert('Access code daalo'); return; }
+
+  const btn = document.getElementById('claim-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Claiming...';
+
+  try {
+    const body = { code, mobile };
+    if (selToss) body.guess = selToss;
+    if (ac)      body.access_code = ac;
+
+    const r = await fetch(API + '/lifafa/claim', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+
+    if (d.status === 'success') {
+      document.getElementById('cs-amt').textContent = d.amount;
+      document.getElementById('claim-success').classList.add('open');
+    } else {
+      alert('❌ ' + d.message);
+    }
+  } catch(e) { alert('Network error'); }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-gift"></i> Claim Lifafa';
+}
+
+// ── CREATE: TYPE SELECT ───────────────────────────────────────────────────────
+function setType(t) {
+  selType = t;
+  ['standard','scratch','toss'].forEach(x => {
+    document.getElementById('tc-'+x).classList.toggle('on', x===t);
+  });
+  document.getElementById('cr-std-fields').style.display    = (t==='standard'||t==='toss') ? 'block' : 'none';
+  document.getElementById('cr-scratch-fields').style.display = t==='scratch' ? 'block' : 'none';
+  document.getElementById('cr-toss-fields').style.display    = t==='toss'    ? 'block' : 'none';
+  calcFund();
+}
+
+function setAns(v) {
+  selAns = v;
+  document.getElementById('ans-h').classList.toggle('on', v==='HEADS');
+  document.getElementById('ans-t').classList.toggle('on', v==='TAILS');
+}
+
+// ── FUND CALC ─────────────────────────────────────────────────────────────────
+function calcFund() {
+  const users = parseInt(document.getElementById('cr-users').value) || 0;
+  let perAmt  = 0;
+  if (selType === 'scratch') {
+    perAmt = parseFloat(document.getElementById('cr-max').value) || 0;
+  } else {
+    perAmt = parseFloat(document.getElementById('cr-amt').value) || 0;
+  }
+  const total = parseFloat((perAmt * users).toFixed(2));
+  const fp    = document.getElementById('fund-preview');
+  if (total > 0 && users > 0) {
+    document.getElementById('fp-total').textContent = total;
+    fp.style.display = 'block';
+  } else {
+    fp.style.display = 'none';
+  }
+}
+
+// ── CREATE LIFAFA ─────────────────────────────────────────────────────────────
+async function createLifafa() {
+  const code  = document.getElementById('cr-code').value.trim().toUpperCase();
+  const users = document.getElementById('cr-users').value;
+  const amt   = document.getElementById('cr-amt').value;
+  const minR  = document.getElementById('cr-min').value;
+  const maxR  = document.getElementById('cr-max').value;
+  const ref   = document.getElementById('cr-ref').value  || 0;
+  const ac    = document.getElementById('cr-ac').value.trim().toUpperCase();
+
+  if (!code)  { alert('Code daalo'); return; }
+  if (!users || parseInt(users) < 1) { alert('Users daalo'); return; }
+
+  if (selType === 'standard' || selType === 'toss') {
+    if (!amt || parseFloat(amt) <= 0) { alert('Amount daalo'); return; }
+  }
+  if (selType === 'scratch') {
+    if (!minR || !maxR) { alert('Min aur Max amount daalo'; return; }
+    if (parseFloat(minR) >= parseFloat(maxR)) { alert('Max > Min hona chahiye'); return; }
+  }
+  if (selType === 'toss' && !selAns) { alert('Correct answer select karo'); return; }
+
+  const btn = document.getElementById('cr-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+
+  try {
+    const body = {
+      code, type: selType,
+      amt:       amt   || 0,
+      min_range: minR  || 0,
+      max_range: maxR  || 0,
+      toss_answer: selAns || '',
+      users, refer_bonus: ref,
+      access_code: ac || ''
+    };
+
+    const r = await fetch(API + '/lifafa/create', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+
+    if (d.status === 'success') {
+      doneCode = d.code;
+      doneLink = window.location.origin + '/claim.html?code=' + d.code;
+      document.getElementById('done-code').textContent = d.code;
+      document.getElementById('done-link').textContent = doneLink;
+      document.getElementById('create-success').style.display = 'flex';
+      loadBal();
+      // Reset form
+      document.getElementById('cr-code').value  = '';
+      document.getElementById('cr-amt').value   = '';
+      document.getElementById('cr-min').value   = '';
+      document.getElementById('cr-max').value   = '';
+      document.getElementById('cr-users').value = '';
+      document.getElementById('cr-ref').value   = '';
+      document.getElementById('cr-ac').value    = '';
+      document.getElementById('fund-preview').style.display = 'none';
+    } else {
+      alert('❌ ' + d.message);
+    }
+  } catch(e) { alert('Network error'); }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Create Lifafa';
+}
+
+// ── SHARE ─────────────────────────────────────────────────────────────────────
+function shareLifafa() {
+  const text = `🧧 Lifafa Claim Karo!\n\nCode: ${doneCode}\nLink: ${doneLink}\n\n⚡ ElitePay Wallet`;
+  if (navigator.share) {
+    navigator.share({ title:'ElitePay Lifafa', text, url: doneLink });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert('Link copied! Share karo.');
+  }
+}
+
+// ── URL AUTO-FILL ─────────────────────────────────────────────────────────────
+const urlCode = new URLSearchParams(window.location.search).get('code');
+if (urlCode) {
+  document.getElementById('cl-code').value = urlCode.toUpperCase();
+  fetchLifafa();
+}
+</script>
+</body>
+</html>
