@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Withdraw | ElitePay</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0f;--black2:#111118;--black3:#1a1a24;
+  --yellow:#fbbf24;--yellow2:#f59e0b;
+  --sky:#38bdf8;--sky2:#0ea5e9;
+  --white:#ffffff;--muted:#64748b;--border:#2a2a38;--red:#f87171;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:var(--black);color:var(--white);min-height:100vh;}
+
+.topbar{
+  background:var(--black2);border-bottom:1px solid var(--border);
+  padding:0.9rem 1.1rem;display:flex;align-items:center;gap:0.85rem;
+  position:sticky;top:0;z-index:100;
+}
+.back-btn{
+  width:38px;height:38px;border-radius:12px;
+  background:var(--black3);border:1px solid var(--border);
+  color:var(--muted);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.9rem;flex-shrink:0;
+}
+.tb-title{font-size:1rem;font-weight:900;color:var(--white);}
+.tb-sub{font-size:0.62rem;color:var(--muted);font-weight:600;}
+
+.wrap{padding:1rem;max-width:480px;margin:0 auto;}
+
+/* BAL CARD */
+.bal-card{
+  background:linear-gradient(135deg,#16162a,#0d0d18);
+  border:1px solid #2a2a42;border-radius:20px;
+  padding:1.4rem;margin-bottom:1rem;
+  display:flex;justify-content:space-between;align-items:center;
+  position:relative;overflow:hidden;
+}
+.bal-card::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(251,191,36,0.1),transparent);
+}
+.bc-left .k{font-size:0.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.bc-left .v{font-size:2rem;font-weight:900;color:var(--yellow);letter-spacing:-1px;margin-top:2px;}
+.bc-left .v sup{font-size:0.9rem;opacity:0.65;}
+.bc-right{text-align:right;}
+.bc-right .k{font-size:0.6rem;color:var(--muted);font-weight:700;}
+.bc-right .v{font-size:0.8rem;font-weight:800;color:var(--sky);margin-top:2px;}
+
+/* FORM CARD */
+.form-card{
+  background:var(--black2);border:1px solid var(--border);
+  border-radius:20px;padding:1.4rem;margin-bottom:1rem;
+}
+.fc-title{font-size:0.85rem;font-weight:900;color:var(--white);margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:0.5rem;}
+
+.f-row{margin-bottom:1rem;}
+.f-lbl{font-size:0.7rem;font-weight:800;color:var(--muted);margin-bottom:6px;display:block;}
+.f-inp{
+  width:100%;padding:0.9rem 1rem;
+  background:var(--black3);border:2px solid var(--border);
+  border-radius:13px;font-size:0.95rem;outline:none;
+  color:var(--white);font-family:inherit;transition:border 0.2s;
+}
+.f-inp:focus{border-color:var(--yellow);}
+.f-inp::placeholder{color:var(--muted);}
+
+/* AMOUNT CHIPS */
+.chips{display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;}
+.chip{
+  padding:0.45rem 0.9rem;border-radius:9px;cursor:pointer;
+  background:var(--black3);border:1px solid var(--border);
+  color:var(--muted);font-weight:800;font-size:0.75rem;
+  font-family:inherit;transition:all 0.15s;
+}
+.chip:active{transform:scale(0.93);}
+.chip.y{
+  background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.3);
+  color:var(--yellow);
+}
+.chip.s{
+  background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3);
+  color:var(--sky);
+}
+
+/* WARN */
+.warn{
+  background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.18);
+  border-radius:13px;padding:0.85rem 1rem;margin-bottom:1rem;
+  font-size:0.72rem;color:var(--red);font-weight:700;line-height:1.6;
+}
+.warn i{margin-right:4px;}
+
+/* INFO LIST */
+.info-list{margin-bottom:1rem;}
+.info-item{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.65rem 0;border-bottom:1px solid var(--border);
+  font-size:0.78rem;color:var(--muted);font-weight:700;
+}
+.info-item:last-child{border-bottom:none;}
+.info-item i{color:var(--sky);width:16px;text-align:center;flex-shrink:0;}
+.info-item b{color:var(--white);}
+
+/* SUBMIT BTN */
+.sub-btn{
+  width:100%;padding:1rem;border-radius:15px;
+  background:linear-gradient(135deg,var(--yellow),var(--yellow2));
+  border:none;color:var(--black);font-weight:900;font-size:1rem;
+  cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 20px rgba(251,191,36,0.3);
+  transition:transform 0.15s,box-shadow 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.sub-btn:active{transform:scale(0.97);}
+.sub-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* HISTORY */
+.hist-item{
+  background:var(--black2);border:1px solid var(--border);
+  border-radius:14px;padding:0.9rem 1rem;margin-bottom:0.6rem;
+  display:flex;align-items:center;gap:0.85rem;
+}
+.hi-ico{
+  width:40px;height:40px;border-radius:13px;flex-shrink:0;
+  background:rgba(251,191,36,0.1);color:var(--yellow);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.hi-ico.s{background:rgba(56,189,248,0.1);color:var(--sky);}
+.hi-ico.f{background:rgba(248,113,113,0.1);color:var(--red);}
+.hi-info{flex:1;min-width:0;}
+.hi-name{font-size:0.83rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hi-rem{font-size:0.65rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hi-right{text-align:right;flex-shrink:0;}
+.hi-amt{font-size:0.9rem;font-weight:900;color:var(--yellow);}
+.hi-time{font-size:0.6rem;color:var(--muted);margin-top:2px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:0.58rem;font-weight:800;margin-top:3px;}
+.bp{background:rgba(251,191,36,0.12);color:var(--yellow);}
+.bs{background:rgba(56,189,248,0.12);color:var(--sky);}
+.bf{background:rgba(248,113,113,0.12);color:var(--red);}
+
+/* SUCCESS OVERLAY */
+#success-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);
+  z-index:999;display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#success-overlay.open{display:flex;}
+.success-box{
+  background:var(--black2);border:1px solid var(--border);
+  border-radius:28px;padding:2rem 1.5rem;width:100%;max-width:360px;
+  text-align:center;animation:zoomIn 0.3s cubic-bezier(.34,1.2,.64,1);
+}
+@keyframes zoomIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:none}}
+.s-tick{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,#10b981,#059669);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;font-size:1.7rem;color:white;
+  box-shadow:0 8px 24px rgba(16,185,129,0.4);
+}
+.s-title{font-size:1.1rem;font-weight:900;color:var(--white);margin-bottom:0.3rem;}
+.s-sub{font-size:0.7rem;color:var(--muted);font-weight:600;margin-bottom:1.3rem;}
+.s-card{
+  background:linear-gradient(135deg,#16162a,#0d0d18);
+  border:1px solid #2a2a42;border-radius:16px;
+  padding:1.2rem;margin-bottom:1.2rem;
+}
+.s-amt{font-size:2.2rem;font-weight:900;color:var(--yellow);letter-spacing:-1px;}
+.s-amt sup{font-size:1rem;opacity:0.65;}
+.s-rows{}
+.s-row{
+  display:flex;justify-content:space-between;
+  font-size:0.78rem;padding:0.58rem 0;
+  border-bottom:1px solid var(--border);
+  color:var(--muted);font-weight:600;
+}
+.s-row:last-child{border-bottom:none;}
+.s-row b{color:var(--white);font-weight:800;font-size:0.75rem;word-break:break-all;text-align:right;max-width:60%;}
+.done-btn{
+  width:100%;padding:0.95rem;border-radius:14px;
+  background:linear-gradient(135deg,var(--yellow),var(--yellow2));
+  border:none;color:var(--black);font-weight:900;font-size:0.95rem;
+  cursor:pointer;font-family:inherit;margin-top:0.5rem;
+}
+
+.empty{text-align:center;padding:2rem;color:var(--muted);}
+.empty i{font-size:1.8rem;display:block;margin-bottom:0.5rem;opacity:0.2;}
+.loading{text-align:center;padding:1.5rem;color:var(--muted);font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+  <div>
+    <div class="tb-title">Withdraw</div>
+    <div class="tb-sub">Wallet se UPI pe transfer</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Balance -->
+  <div class="bal-card">
+    <div class="bc-left">
+      <div class="k">Available Balance</div>
+      <div class="v"><sup>₹</sup><span id="bal-show">0</span></div>
+    </div>
+    <div class="bc-right">
+      <div class="k">Wallet ID</div>
+      <div class="v" id="wid-show">—</div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="fc-title"><i class="fa-solid fa-money-bill-transfer" style="color:var(--yellow)"></i> Withdrawal Details</div>
+
+    <div class="f-row">
+      <label class="f-lbl">UPI ID *</label>
+      <input class="f-inp" id="upi-inp" placeholder="yourname@paytm / 9999@upi"
+        autocomplete="off" autocapitalize="none" />
+    </div>
+
+    <div class="f-row">
+      <label class="f-lbl">Amount (₹) *</label>
+      <input class="f-inp" id="amt-inp" type="number" placeholder="Minimum ₹10"
+        oninput="checkAmt()" />
+      <div class="chips">
+        <button class="chip" onclick="setAmt(50)">₹50</button>
+        <button class="chip" onclick="setAmt(100)">₹100</button>
+        <button class="chip" onclick="setAmt(250)">₹250</button>
+        <button class="chip" onclick="setAmt(500)">₹500</button>
+        <button class="chip y" onclick="setAmtAll()">Max</button>
+      </div>
+      <div id="amt-err" style="font-size:0.7rem;color:var(--red);margin-top:6px;font-weight:800;display:none;"></div>
+    </div>
+  </div>
+
+  <!-- WARN -->
+  <div class="warn">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    UPI ID <b>sahi daalo</b> — galat ID pe paisa wapas nahi aayega.<br>
+    <i class="fa-solid fa-clock"></i>
+    Admin <b>48 ghante</b> ke andar process karega.
+  </div>
+
+  <!-- INFO -->
+  <div class="form-card" style="margin-bottom:1rem;">
+    <div class="info-list">
+      <div class="info-item"><i class="fa-solid fa-circle-check"></i> Minimum withdrawal: <b>₹10</b></div>
+      <div class="info-item"><i class="fa-solid fa-clock"></i> Processing time: <b>24-48 hrs</b></div>
+      <div class="info-item"><i class="fa-solid fa-indian-rupee-sign"></i> Zero fee — pura amount milega</div>
+      <div class="info-item"><i class="fa-brands fa-telegram"></i> TG pe instant alert aayega</div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <button class="sub-btn" id="sub-btn" onclick="submitWd()">
+    <i class="fa-solid fa-paper-plane"></i> Withdraw Request Bhejo
+  </button>
+
+  <!-- HISTORY -->
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:0.85rem;font-weight:900;color:var(--white);margin-bottom:0.75rem;">
+      🕐 Withdrawal History
+    </div>
+    <div id="wd-hist">
+      <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS -->
+<div id="success-overlay">
+  <div class="success-box">
+    <div class="s-tick"><i class="fa-solid fa-check"></i></div>
+    <div class="s-title">Request Submitted! 🎉</div>
+    <div class="s-sub">Admin 48 ghante mein process karega</div>
+    <div class="s-card">
+      <div class="s-amt"><sup>₹</sup><span id="s-amt">0</span></div>
+    </div>
+    <div class="s-rows">
+      <div class="s-row"><span>UPI ID</span><b id="s-upi">—</b></div>
+      <div class="s-row"><span>Txn ID</span><b id="s-txid" style="font-family:monospace;font-size:0.7rem">—</b></div>
+      <div class="s-row"><span>Status</span><b style="color:var(--yellow)">⏳ Pending</b></div>
+      <div class="s-row"><span>Processing</span><b>24-48 hrs</b></div>
+    </div>
+    <button class="done-btn" onclick="closeDone()">
+      <i class="fa-solid fa-check"></i> Done
+    </button>
+  </div>
+</div>
+
+<script>
+const API   = '';
+const token = localStorage.getItem('ep_token') || localStorage.getItem('token') || '';
+const user  = JSON.parse(localStorage.getItem('ep_user') || localStorage.getItem('user') || '{}');
+let curBal  = 0;
+
+if (!token) window.location.href = 'index.html';
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadBalance();
+loadHistory();
+
+async function loadBalance() {
+  try {
+    const r = await fetch(API + '/wallet/balance', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const d = await r.json();
+    if (d.status === 'success') {
+      curBal = parseFloat(d.balance) || 0;
+      document.getElementById('bal-show').textContent = curBal.toFixed(2);
+      document.getElementById('wid-show').textContent = d.wallet_id || user.wallet_id || '—';
+    }
+  } catch(e) {}
+}
+
+// ── AMOUNT HELPERS ────────────────────────────────────────────────────────────
+function setAmt(v) {
+  document.getElementById('amt-inp').value = v;
+  checkAmt();
+}
+function setAmtAll() {
+  document.getElementById('amt-inp').value = Math.floor(curBal);
+  checkAmt();
+}
+function checkAmt() {
+  const v   = parseFloat(document.getElementById('amt-inp').value) || 0;
+  const err = document.getElementById('amt-err');
+  if (v > 0 && v < 10) {
+    err.textContent = '❌ Minimum ₹10 required';
+    err.style.display = 'block';
+  } else if (v > curBal) {
+    err.textContent = `❌ Insufficient balance. Available: ₹${curBal.toFixed(2)}`;
+    err.style.display = 'block';
+  } else {
+    err.style.display = 'none';
+  }
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+async function submitWd() {
+  const upi = document.getElementById('upi-inp').value.trim();
+  const amt = parseFloat(document.getElementById('amt-inp').value) || 0;
+  const btn = document.getElementById('sub-btn');
+
+  if (!upi) { alert('UPI ID daalo'); return; }
+  if (amt < 10) { alert('Minimum ₹10 required'); return; }
+  if (amt > curBal) { alert(`Insufficient balance. Available: ₹${curBal.toFixed(2)}`); return; }
+  if (!upi.includes('@')) { alert('Valid UPI ID daalo (example: name@paytm)'); return; }
+
+  if (!confirm(`₹${amt} withdraw karna hai?\nUPI: ${upi}`)) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+  try {
+    const r = await fetch(API + '/wallet/withdraw', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify({ upi, amount: amt })
+    });
+    const d = await r.json();
+
+    if (d.status === 'success') {
+      // Show success
+      document.getElementById('s-amt').textContent  = amt;
+      document.getElementById('s-upi').textContent  = upi;
+      document.getElementById('s-txid').textContent = d.tx_id || '—';
+      document.getElementById('success-overlay').classList.add('open');
+
+      // Reset form
+      document.getElementById('upi-inp').value = '';
+      document.getElementById('amt-inp').value = '';
+
+      // Reload balance & history
+      loadBalance();
+      loadHistory();
+    } else {
+      alert('❌ ' + (d.message || 'Error aaya'));
+    }
+  } catch(e) { alert('Network error — dobara try karo'); }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Withdraw Request Bhejo';
+}
+
+function closeDone() {
+  document.getElementById('success-overlay').classList.remove('open');
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+async function loadHistory() {
+  const el = document.getElementById('wd-hist');
+  try {
+    const r = await fetch(API + '/wallet/transactions', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const d = await r.json();
+    if (d.status !== 'success') { el.innerHTML = '<div class="empty"><i class="fa-solid fa-receipt"></i>Koi history nahi</div>'; return; }
+
+    const wds = (d.transactions || []).filter(t =>
+      t.type === 'withdraw' ||
+      (t.remark && t.remark.toLowerCase().includes('withdraw'))
+    );
+
+    if (!wds.length) {
+      el.innerHTML = '<div class="empty"><i class="fa-solid fa-receipt"></i>Koi withdrawal nahi abhi tak</div>';
+      return;
+    }
+
+    el.innerHTML = wds.map(t => {
+      const ico   = t.status==='success' ? 's' : t.status==='failed'||t.status==='rejected' ? 'f' : '';
+      const icoIc = t.status==='success' ? 'fa-check' : t.status==='pending' ? 'fa-clock' : 'fa-xmark';
+      const badge = t.status==='success'
+        ? '<span class="badge bs">✅ Success</span>'
+        : t.status==='pending'
+        ? '<span class="badge bp">⏳ Pending</span>'
+        : '<span class="badge bf">❌ ' + t.status + '</span>';
+      const upi = t.remark?.replace('Withdraw to ','') || '—';
+      const time = t.tx_time ? new Date(t.tx_time).toLocaleString('en-IN',{
+        timeZone:'Asia/Kolkata',day:'2-digit',month:'short',
+        hour:'2-digit',minute:'2-digit',hour12:true
+      }) : '—';
+      return `
+        <div class="hist-item">
+          <div class="hi-ico ${ico}"><i class="fa-solid ${icoIc}"></i></div>
+          <div class="hi-info">
+            <div class="hi-name">Withdrawal Request</div>
+            <div class="hi-rem">${upi}</div>
+          </div>
+          <div class="hi-right">
+            <div class="hi-amt">₹${t.amount}</div>
+            <div class="hi-time">${time}</div>
+            ${badge}
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div class="empty">Error loading history</div>'; }
+}
+</script>
+</body>
+    </html>
