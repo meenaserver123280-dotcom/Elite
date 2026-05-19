@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIN | ElitePay</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--yellow:#f5c518;--sky:#38bdf8;--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--border:#2a2a2a;--text:#f0f0f0;--text2:#a0a0a0;--muted:#555;--green:#10b981;--red:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;background:var(--bg);color:var(--text)}
+.bg-mesh{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 50% at 20% 10%,rgba(245,197,24,0.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(56,189,248,0.06) 0%,transparent 60%),#0a0a0a}
+
+.brand{text-align:center;margin-bottom:2rem;position:relative;z-index:1}
+.brand-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--yellow),#e6a800);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.8rem;box-shadow:0 8px 24px rgba(245,197,24,0.3)}
+.brand-icon i{color:#000;font-size:1.4rem}
+.brand-name{font-size:1.5rem;font-weight:800;color:var(--text)}
+.brand-name span{color:var(--yellow)}
+
+.card{background:var(--bg2);border:1.5px solid var(--border);border-radius:24px;padding:2rem 1.5rem;width:100%;max-width:380px;position:relative;z-index:1;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),var(--sky))}
+
+.pin-title{font-size:1rem;font-weight:800;text-align:center;margin-bottom:0.3rem}
+.pin-sub{font-size:0.68rem;color:var(--text2);text-align:center;margin-bottom:1.8rem}
+
+.pin-dots{display:flex;justify-content:center;gap:0.75rem;margin-bottom:1.8rem}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);transition:all 0.2s}
+.dot.filled{background:var(--yellow);border-color:var(--yellow);box-shadow:0 0 10px rgba(245,197,24,0.4)}
+
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:1rem}
+.key{padding:1rem;background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.15s;text-align:center;color:var(--text);border:none}
+.key:active{background:#2a2a2a;transform:scale(0.94)}
+.key.del{color:var(--red);font-size:1rem}
+.key.empty{background:transparent;border-color:transparent;cursor:default}
+
+.msg{padding:0.7rem 1rem;border-radius:12px;font-size:0.78rem;font-weight:600;margin-bottom:1rem;display:none;text-align:center}
+.msg.error{display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.msg.success{display:block;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green)}
+
+.pin-hint{text-align:center;font-size:0.62rem;color:var(--muted);margin-top:0.5rem}
+.pin-hint a{color:var(--sky);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="brand">
+  <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+  <div class="brand-name">ELITE<span>PAY</span></div>
+</div>
+<div class="card">
+  <div id="msg" class="msg"></div>
+  <div class="pin-title" id="pin-title">Enter PIN</div>
+  <div class="pin-sub" id="pin-sub">Enter your 4-digit security PIN</div>
+  <div class="pin-dots">
+    <div class="dot" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+  </div>
+  <div class="keypad">
+    <button class="key" onclick="press(1)">1</button>
+    <button class="key" onclick="press(2)">2</button>
+    <button class="key" onclick="press(3)">3</button>
+    <button class="key" onclick="press(4)">4</button>
+    <button class="key" onclick="press(5)">5</button>
+    <button class="key" onclick="press(6)">6</button>
+    <button class="key" onclick="press(7)">7</button>
+    <button class="key" onclick="press(8)">8</button>
+    <button class="key" onclick="press(9)">9</button>
+    <button class="key empty"></button>
+    <button class="key" onclick="press(0)">0</button>
+    <button class="key del" onclick="del()"><i class="fa-solid fa-delete-left"></i></button>
+  </div>
+  <div class="pin-hint" id="pin-hint"><a href="forgot.html">Forgot PIN?</a></div>
+</div>
+<script>
+const API    = '';
+const token  = localStorage.getItem('token');
+const pinSet = localStorage.getItem('pin_set') === 'true';
+if (!token) window.location.href = 'index.html';
+
+let pin = '';
+let isSetPin = !pinSet;
+let confirmPin = '';
+let step = isSetPin ? 'set' : 'verify';
+
+document.getElementById('pin-title').textContent = isSetPin ? 'Set PIN' : 'Enter PIN';
+document.getElementById('pin-sub').textContent   = isSetPin ? 'Create a 4-digit security PIN' : 'Enter your 4-digit security PIN';
+if (isSetPin) document.getElementById('pin-hint').style.display = 'none';
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d'+i).classList.toggle('filled', i < pin.length);
+  }
+}
+
+function showMsg(text, type) { const m = document.getElementById('msg'); m.textContent = text; m.className = 'msg '+type; }
+
+function press(n) {
+  if (pin.length >= 4) return;
+  pin += n.toString();
+  updateDots();
+  if (pin.length === 4) setTimeout(submit, 150);
+}
+
+function del() {
+  pin = pin.slice(0, -1);
+  updateDots();
+}
+
+async function submit() {
+  if (step === 'verify') {
+    try {
+      const r = await fetch(API + '/auth/verify-pin', {
+        method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({ pin })
+      });
+      const d = await r.json();
+      if (d.status === 'success') { window.location.href = 'dashboard.html'; }
+      else { showMsg('Wrong PIN! Try again.', 'error'); pin = ''; updateDots(); }
+    } catch(e) { showMsg('Network error', 'error'); pin = ''; updateDots(); }
+  } else if (step === 'set') {
+    confirmPin = pin; pin = '';
+    step = 'confirm';
+    document.getElementById('pin-title').textContent = 'Confirm PIN';
+    document.getElementById('pin-sub').textContent   = 'Enter PIN again to confirm';
+    updateDots();
+  } else if (step === 'confirm') {
+    if (pin !== confirmPin) {
+      showMsg('PINs do not match! Try again.', 'error');
+      pin = ''; confirmPin = ''; step = 'set';
+      document.getElementById('pin-title').textContent = 'Set PIN';
+      document.getElementById('pin-sub').textContent   = 'Create a 4-digit security PIN';
+      updateDots(); return;
+    }
+    try {
+      const r = await fetch(API + '/auth/set-pin', {
+        method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({ pin })
+      });
+      const d = await r.json();
+      if (d.status === 'success') {
+        localStorage.setItem('pin_set', 'true');
+        window.location.href = 'dashboard.html';
+      } else { showMsg(d.message || 'Error', 'error'); pin = ''; updateDots(); }
+    } catch(e) { showMsg('Network error', 'error'); pin = ''; updateDots(); }
+  }
+}
+</script>
+</body>
+</html>
