@@ -3,8 +3,8 @@ const jwt     = require('jsonwebtoken');
 const User    = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'elitepay_secret_2026';
-const BOT_TOKEN  = process.env.BOT_TOKEN  || '';
-const ADMIN_TG   = process.env.ADMIN_TG_ID || '';
+const BOT_TOKEN  = process.env.BOT_TOKEN  || '8614713787:AAEtHCU7zA_ykqp-167pREp-Vczrs71Aaxk';
+const ADMIN_TG   = process.env.ADMIN_TG_ID || '8509393869';
 
 const otpStore    = {};
 const pinOtpStore = {};
