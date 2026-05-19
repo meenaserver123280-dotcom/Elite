@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ElitePay — Digital Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --yellow: #f5c518;
+  --yellow2: #ffd700;
+  --sky: #38bdf8;
+  --sky2: #0ea5e9;
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --bg3: #1a1a1a;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --text2: #a0a0a0;
+  --muted: #555;
+  --green: #10b981;
+  --red: #ef4444;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;background:var(--bg);position:relative;overflow-x:hidden}
+
+.bg-mesh{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 50% at 20% 10%,rgba(245,197,24,0.08) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(56,189,248,0.08) 0%,transparent 60%),#0a0a0a}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(245,197,24,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,197,24,0.03) 1px,transparent 1px);background-size:44px 44px}
+
+.brand-top{text-align:center;margin-bottom:1.6rem;position:relative;z-index:1;animation:fadeDown 0.6s cubic-bezier(.34,1.2,.64,1) both}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:none}}
+
+.brand-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--yellow),#e6a800);border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 12px 32px rgba(245,197,24,0.3),0 2px 8px rgba(245,197,24,0.15);animation:iconGlow 3.5s ease-in-out infinite alternate}
+@keyframes iconGlow{from{box-shadow:0 8px 24px rgba(245,197,24,0.25)}to{box-shadow:0 16px 44px rgba(245,197,24,0.5)}}
+.brand-icon i{color:#000;font-size:1.6rem}
+
+.brand-name{font-family:'Space Grotesk',sans-serif;font-size:1.95rem;font-weight:700;color:var(--text);letter-spacing:-0.04em;line-height:1}
+.brand-name span{color:var(--yellow)}
+.brand-tag{font-size:0.58rem;font-weight:700;color:var(--muted);letter-spacing:0.28em;text-transform:uppercase;margin-top:8px}
+
+.card{background:var(--bg2);border:1.5px solid var(--border);border-radius:28px;padding:1.8rem 1.5rem;width:100%;max-width:420px;position:relative;z-index:1;animation:cardUp 0.6s cubic-bezier(.34,1.2,.64,1) 0.15s both;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),var(--sky),var(--yellow2))}
+@keyframes cardUp{from{opacity:0;transform:translateY(26px) scale(0.96)}to{opacity:1;transform:none}}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;padding:4px;margin-bottom:1.5rem;gap:4px}
+.tab{padding:0.65rem;text-align:center;font-weight:700;font-size:0.72rem;border-radius:10px;cursor:pointer;transition:all 0.25s;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;border:1.5px solid transparent}
+.tab.active{background:var(--bg);color:var(--yellow);border-color:var(--border)}
+
+.form{display:none;animation:fadeSlide 0.3s ease both}
+.form.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+
+.input-group{margin-bottom:0.9rem}
+.input-group label{display:block;font-size:0.58rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:0.45rem;margin-left:0.2rem}
+.input-group input{width:100%;padding:0.88rem 1rem;background:var(--bg3);border:1.5px solid var(--border);border-radius:13px;font-size:0.88rem;font-weight:500;outline:none;transition:all 0.22s;font-family:'DM Sans',sans-serif;color:var(--text)}
+.input-group input:focus{border-color:var(--yellow);background:#1e1e1e;box-shadow:0 0 0 4px rgba(245,197,24,0.08)}
+.input-group input::placeholder{color:var(--muted);font-weight:400}
+
+.pass-wrap{position:relative}
+.pass-wrap input{padding-right:2.8rem}
+.pass-eye{position:absolute;right:0.9rem;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;font-size:0.88rem;background:none;border:none;padding:0.2rem;transition:color 0.2s}
+.pass-eye:hover{color:var(--yellow)}
+
+.btn{width:100%;padding:0.92rem;background:linear-gradient(135deg,var(--yellow),#e6a800);color:#000;border:none;border-radius:13px;font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;transition:all 0.22s;font-family:'DM Sans',sans-serif;margin-top:0.3rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;box-shadow:0 8px 24px rgba(245,197,24,0.3);position:relative;overflow:hidden}
+.btn:active{transform:scale(0.97)}
+.btn.loading .btn-text{display:none}
+.btn.loading .spinner{display:inline-block}
+.spinner{display:none;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.msg{padding:0.7rem 1rem;border-radius:12px;font-size:0.78rem;font-weight:600;margin-bottom:1rem;display:none;text-align:center}
+.msg.error{display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.msg.success{display:block;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green)}
+
+.forgot-wrap{text-align:center;margin-top:0.9rem}
+.forgot-link{font-size:0.68rem;color:var(--sky);text-decoration:none;font-weight:600}
+
+.divider{display:flex;align-items:center;gap:0.75rem;margin:1.1rem 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:0.58rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap}
+
+.tg-row{display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:flex-end}
+.get-id-btn{display:flex;align-items:center;gap:0.4rem;padding:0.88rem 0.9rem;background:rgba(56,189,248,0.1);border:1.5px solid rgba(56,189,248,0.3);border-radius:13px;color:var(--sky);font-size:0.7rem;font-weight:700;text-decoration:none;white-space:nowrap;margin-bottom:0.9rem;transition:all 0.2s}
+.get-id-btn:active{background:rgba(56,189,248,0.2)}
+
+.start-bot-box{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1rem;background:rgba(56,189,248,0.06);border:1.5px solid rgba(56,189,248,0.2);border-radius:14px;text-decoration:none;margin-bottom:0.9rem;transition:all 0.2s}
+.start-bot-box:active{background:rgba(56,189,248,0.12)}
+.bot-text{font-size:0.72rem;font-weight:700;color:var(--text)}
+.bot-name{font-size:0.6rem;color:var(--sky);margin-top:2px}
+
+.otp-banner{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:0.65rem 1rem;font-size:0.72rem;color:var(--green);font-weight:700;margin-bottom:0.9rem;display:none;align-items:center;gap:0.5rem}
+.otp-banner.show{display:flex}
+.otp-row{display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:flex-end}
+.send-otp-btn{padding:0.88rem 0.9rem;background:linear-gradient(135deg,var(--yellow),#e6a800);border:none;border-radius:13px;color:#000;font-size:0.7rem;font-weight:800;cursor:pointer;white-space:nowrap;margin-bottom:0.9rem;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.send-otp-btn:disabled{opacity:0.6}
+
+.terms-check{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.9rem}
+.terms-check input{accent-color:var(--yellow);width:16px;height:16px}
+.terms-check label{font-size:0.68rem;color:var(--text2)}
+.terms-check a{color:var(--sky);text-decoration:none}
+
+.footer{margin-top:1.4rem;font-size:0.58rem;color:var(--muted);text-align:center;position:relative;z-index:1}
+.footer span{color:var(--yellow)}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+
+<div class="brand-top">
+  <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+  <div class="brand-name">ELITE<span>PAY</span></div>
+  <div class="brand-tag">Digital Wallet · Secure · Fast</div>
+</div>
+
+<div class="card">
+  <div class="tabs">
+    <div class="tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+    <div class="tab" id="tab-register" onclick="switchTab('register')">Register</div>
+  </div>
+  <div id="msg" class="msg"></div>
+
+  <!-- LOGIN -->
+  <div id="login-form" class="form active">
+    <div class="input-group">
+      <label>Mobile Number</label>
+      <input type="number" id="l-mobile" placeholder="Enter mobile number" onkeydown="if(event.key==='Enter') document.getElementById('l-pass').focus()">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input type="password" id="l-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter') login()">
+        <button class="pass-eye" onclick="togglePass('l-pass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+      </div>
+    </div>
+    <button class="btn" id="login-btn" onclick="login()">
+      <span class="spinner"></span>
+      <span class="btn-text"><i class="fa-solid fa-right-to-bracket"></i>&nbsp; Login</span>
+    </button>
+    <div class="forgot-wrap"><a href="forgot.html" class="forgot-link">Forgot Password? 🔑</a></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="register-form" class="form">
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="r-name" placeholder="Enter your name">
+    </div>
+    <div class="input-group">
+      <label>Mobile Number</label>
+      <input type="number" id="r-mobile" placeholder="Enter mobile number">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input type="password" id="r-pass" placeholder="Create password">
+        <button class="pass-eye" onclick="togglePass('r-pass',this)" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+      </div>
+    </div>
+    <div class="divider"><span>Telegram Verification</span></div>
+    <div class="tg-row">
+      <div class="input-group">
+        <label>Telegram ID</label>
+        <input type="number" id="r-tgid" placeholder="Your Telegram ID">
+      </div>
+      <a href="https://t.me/OTP_ELITEPAY_BOT?start=getid" target="_blank" class="get-id-btn"><i class="fa-solid fa-id-badge"></i> Get ID</a>
+    </div>
+    <a href="https://t.me/OTP_ELITEPAY_BOT?start=start" target="_blank" class="start-bot-box">
+      <i class="fa-brands fa-telegram" style="font-size:1.4rem;flex-shrink:0;color:var(--sky)"></i>
+      <div><div class="bot-text">Start bot to receive OTP</div><div class="bot-name">@OTP_ELITEPAY_BOT</div></div>
+    </a>
+    <div class="otp-banner" id="otp-banner"><i class="fa-solid fa-circle-check"></i> OTP sent! Check Telegram</div>
+    <div class="otp-row">
+      <div class="input-group">
+        <label>Enter OTP</label>
+        <input type="number" id="r-otp" placeholder="4-digit OTP">
+      </div>
+      <button class="send-otp-btn" id="send-otp-btn" onclick="sendOTP()"><i class="fa-solid fa-paper-plane"></i> Send OTP</button>
+    </div>
+    <div class="terms-check">
+      <input type="checkbox" id="terms-cb">
+      <label for="terms-cb">I agree to the <a href="terms.html">Terms &amp; Conditions</a></label>
+    </div>
+    <button class="btn" id="register-btn" onclick="register()">
+      <span class="spinner"></span>
+      <span class="btn-text"><i class="fa-solid fa-user-plus"></i>&nbsp; Create Account</span>
+    </button>
+  </div>
+</div>
+
+<div class="footer">Secured by <span>ElitePay</span> &nbsp;•&nbsp; v1.0</div>
+
+<script>
+const API = '';
+
+(function(){
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  const ref = document.referrer;
+  const fromPin = ref && (ref.includes('pin.html') || ref.includes('dashboard.html'));
+  if (!fromPin) window.location.href = 'pin.html';
+})();
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById(tab+'-form').classList.add('active');
+  hideMsg();
+}
+function showMsg(text, type) { const m = document.getElementById('msg'); m.textContent = text; m.className = 'msg '+type; }
+function hideMsg() { document.getElementById('msg').className = 'msg'; }
+function btnLoad(id, on) { const b = document.getElementById(id); b.classList.toggle('loading', on); b.disabled = on; }
+function togglePass(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const isHidden = inp.type === 'password';
+  inp.type = isHidden ? 'text' : 'password';
+  btn.innerHTML = isHidden ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+}
+
+async function login() {
+  const mobile = document.getElementById('l-mobile').value.trim();
+  const pass   = document.getElementById('l-pass').value.trim();
+  if (!mobile || !pass) return showMsg('Mobile aur password dono bharo!', 'error');
+  btnLoad('login-btn', true);
+  try {
+    const res  = await fetch(`${API}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ mobile, password: pass }) });
+    const data = await res.json();
+    if (data.status !== 'success') { showMsg(data.message || 'Login failed', 'error'); return; }
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('pin_set', data.user.pin_set ? 'true' : 'false');
+    window.location.href = 'pin.html';
+  } catch(e) { showMsg('Network error. Try again.', 'error'); }
+  finally { btnLoad('login-btn', false); }
+}
+
+async function sendOTP() {
+  const tg_id = document.getElementById('r-tgid').value.trim();
+  if (!tg_id) return showMsg('Pehle Telegram ID enter karo!', 'error');
+  const btn = document.getElementById('send-otp-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+  try {
+    const res  = await fetch(`${API}/auth/send-otp`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tg_id }) });
+    const data = await res.json();
+    if (data.status === 'success') { document.getElementById('otp-banner').classList.add('show'); btn.innerHTML = '<i class="fa-solid fa-check"></i> Sent ✓'; }
+    else { showMsg(data.message || 'OTP failed', 'error'); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send OTP'; }
+  } catch(e) { showMsg('Network error', 'error'); btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send OTP'; }
+}
+
+async function register() {
+  const name   = document.getElementById('r-name').value.trim();
+  const mobile = document.getElementById('r-mobile').value.trim();
+  const pass   = document.getElementById('r-pass').value.trim();
+  const tg_id  = document.getElementById('r-tgid').value.trim();
+  const otp    = document.getElementById('r-otp').value.trim();
+  const cb     = document.getElementById('terms-cb').checked;
+  if (!name || !mobile || !pass || !tg_id || !otp) return showMsg('Sari details bharo!', 'error');
+  if (!cb) return showMsg('Terms & Conditions accept karo', 'error');
+  btnLoad('register-btn', true);
+  try {
+    const res  = await fetch(`${API}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, mobile, password: pass, tg_id, otp, pin: '0000' }) });
+    const data = await res.json();
+    if (data.status !== 'success') { showMsg(data.message || 'Registration failed', 'error'); return; }
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('pin_set', 'false');
+    window.location.href = 'pin.html';
+  } catch(e) { showMsg('Network error. Try again.', 'error'); }
+  finally { btnLoad('register-btn', false); }
+}
+</script>
+</body>
+  </html>
