@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send Money | ElitePay</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--yellow:#f5c518;--sky:#38bdf8;--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--border:#2a2a2a;--text:#f0f0f0;--text2:#a0a0a0;--muted:#555;--green:#10b981;--red:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
+.header{background:rgba(10,10,10,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0.85rem 1.1rem;display:flex;align-items:center;gap:0.8rem;position:sticky;top:0;z-index:100}
+.back-btn{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:11px;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;font-size:0.85rem;text-decoration:none}
+.h-title{font-size:1rem;font-weight:800}
+.h-title span{color:var(--yellow)}
+.wrap{max-width:480px;margin:0 auto;padding:1rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:1.3rem;margin-bottom:0.9rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--yellow),var(--sky))}
+.c-title{font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:1rem}
+.inp-grp{margin-bottom:0.85rem}
+.inp-grp label{display:block;font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:0.4rem}
+.inp{width:100%;padding:0.85rem 1rem;background:var(--bg3);border:1.5px solid var(--border);border-radius:13px;font-size:0.88rem;font-weight:500;outline:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;color:var(--text)}
+.inp:focus{border-color:var(--yellow);background:#1e1e1e;box-shadow:0 0 0 4px rgba(245,197,24,0.06)}
+.inp::placeholder{color:var(--muted);font-weight:400}
+.inp-row{display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:flex-end}
+.lookup-btn{padding:0.85rem 1rem;background:rgba(56,189,248,0.1);border:1.5px solid rgba(56,189,248,0.3);border-radius:13px;color:var(--sky);font-size:0.75rem;font-weight:800;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;margin-bottom:0.85rem;transition:all 0.15s}
+.lookup-btn:active{background:rgba(56,189,248,0.2)}
+.user-found{display:none;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:13px;padding:0.8rem 1rem;margin-bottom:0.85rem;align-items:center;gap:0.75rem}
+.user-found.show{display:flex}
+.uf-av{width:38px;height:38px;background:linear-gradient(135deg,var(--yellow),#e6a800);border-radius:11px;display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:0.9rem;flex-shrink:0}
+.uf-name{font-size:0.82rem;font-weight:800;color:var(--green)}
+.uf-mob{font-size:0.6rem;color:var(--muted)}
+.amt-big{font-size:2.2rem;font-weight:800;color:var(--yellow);text-align:center;padding:1rem;background:var(--bg3);border:1.5px solid var(--border);border-radius:13px;outline:none;width:100%;font-family:'DM Sans',sans-serif;margin-bottom:0.85rem}
+.amt-big::placeholder{color:var(--muted);font-size:1.2rem}
+.quick-amts{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.85rem}
+.qa{padding:0.4rem 0.9rem;background:var(--bg3);border:1px solid var(--border);border-radius:100px;font-size:0.68rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.qa:active,.qa.sel{background:rgba(245,197,24,0.12);border-color:rgba(245,197,24,0.3);color:var(--yellow)}
+.btn{width:100%;padding:0.92rem;background:linear-gradient(135deg,var(--yellow),#e6a800);color:#000;border:none;border-radius:13px;font-size:0.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;box-shadow:0 8px 24px rgba(245,197,24,0.25);font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.5}
+.btn.loading .btn-text{display:none}
+.btn.loading .spinner{display:inline-block}
+.spinner{display:none;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.msg{padding:0.7rem 1rem;border-radius:12px;font-size:0.78rem;font-weight:600;margin-bottom:0.85rem;display:none;text-align:center}
+.msg.error{display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
+.msg.success{display:block;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green)}
+
+/* RECEIPT MODAL */
+#receipt-modal{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:1rem}
+#receipt-modal.open{display:flex}
+.receipt-box{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:1.8rem 1.4rem;width:100%;max-width:360px;text-align:center;animation:zoomIn 0.3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes zoomIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:none}}
+.r-tick{width:64px;height:64px;background:linear-gradient(135deg,var(--green),#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.6rem;color:white;box-shadow:0 8px 20px rgba(16,185,129,0.35)}
+.r-title{font-size:1.1rem;font-weight:800;margin-bottom:0.2rem}
+.r-sub{font-size:0.65rem;color:var(--muted);margin-bottom:1.2rem}
+.r-card{background:linear-gradient(135deg,#1a1a00,#0d0d00);border:1px solid #3a3a00;border-radius:16px;padding:1rem;margin-bottom:1rem}
+.r-amt{font-size:1.8rem;font-weight:800;color:var(--yellow)}
+.r-to{font-size:0.65rem;color:var(--muted);margin-top:3px}
+.r-rows{margin-bottom:1rem;text-align:left}
+.r-row{display:flex;justify-content:space-between;font-size:0.72rem;padding:0.5rem 0;border-bottom:1px solid var(--border);color:var(--text2)}
+.r-row:last-child{border-bottom:none}
+.r-row span:last-child{font-weight:700;color:var(--text)}
+.r-txn{background:rgba(245,197,24,0.1);color:var(--yellow);padding:2px 8px;border-radius:100px;font-size:0.6rem;font-weight:700}
+.btn-done{width:100%;padding:0.9rem;border-radius:13px;background:linear-gradient(135deg,var(--yellow),#e6a800);border:none;color:#000;font-weight:800;font-size:0.88rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));z-index:50}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);font-size:0.5rem;font-weight:800;text-transform:uppercase;cursor:pointer;text-decoration:none;flex:1;transition:color 0.18s;padding-top:4px;position:relative}
+.nav-item.active{color:var(--yellow)}
+.nav-pip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:18px;height:2px;background:var(--yellow);border-radius:0 0 4px 4px;display:none}
+.nav-item.active .nav-pip{display:block}
+.nav-item i{font-size:1.05rem}
+</style>
+</head>
+<body>
+
+<div id="receipt-modal">
+  <div class="receipt-box">
+    <div class="r-tick"><i class="fa-solid fa-check"></i></div>
+    <div class="r-title">Payment Successful!</div>
+    <div class="r-sub">Transaction completed</div>
+    <div class="r-card">
+      <div class="r-amt">₹<span id="r-amt">0</span></div>
+      <div class="r-to">Paid to <span id="r-to">—</span></div>
+    </div>
+    <div class="r-rows">
+      <div class="r-row"><span>Recipient</span><span id="r-name">—</span></div>
+      <div class="r-row"><span>Mobile</span><span id="r-mobile">—</span></div>
+      <div class="r-row"><span>Txn ID</span><span class="r-txn" id="r-txid">—</span></div>
+      <div class="r-row"><span>Status</span><span style="color:var(--green);font-weight:800">✅ Success</span></div>
+    </div>
+    <button class="btn-done" onclick="document.getElementById('receipt-modal').classList.remove('open');resetForm()">Done</button>
+  </div>
+</div>
+
+<div class="header">
+  <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="h-title">Send <span>Money</span></div>
+</div>
+
+<div class="wrap">
+  <div id="msg" class="msg"></div>
+
+  <div class="card">
+    <div class="c-title">Receiver Details</div>
+    <div class="inp-row">
+      <div class="inp-grp" style="margin:0">
+        <label>Mobile Number</label>
+        <input class="inp" type="number" id="receiver" placeholder="Enter mobile number" />
+      </div>
+      <button class="lookup-btn" onclick="lookup()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </div>
+    <div class="user-found" id="user-found">
+      <div class="uf-av" id="uf-av">?</div>
+      <div>
+        <div class="uf-name" id="uf-name">—</div>
+        <div class="uf-mob" id="uf-mob">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="c-title">Amount</div>
+    <input class="amt-big" type="number" id="amount" placeholder="₹ Enter amount" />
+    <div class="quick-amts">
+      <div class="qa" onclick="setAmt(10)">₹10</div>
+      <div class="qa" onclick="setAmt(50)">₹50</div>
+      <div class="qa" onclick="setAmt(100)">₹100</div>
+      <div class="qa" onclick="setAmt(500)">₹500</div>
+      <div class="qa" onclick="setAmt(1000)">₹1000</div>
+    </div>
+    <div class="inp-grp">
+      <label>Comment (Optional)</label>
+      <input class="inp" type="text" id="comment" placeholder="Add a note..." />
+    </div>
+    <button class="btn" id="send-btn" onclick="sendMoney()">
+      <span class="spinner"></span>
+      <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> Send Money</span>
+    </button>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <a href="dashboard.html" class="nav-item"><div class="nav-pip"></div><i class="fa-solid fa-house"></i>Home</a>
+  <a href="transfer.html" class="nav-item active"><div class="nav-pip"></div><i class="fa-solid fa-paper-plane"></i>Send</a>
+  <a href="deposit.html" class="nav-item"><div class="nav-pip"></div><i class="fa-solid fa-plus"></i>Add</a>
+  <a href="transactions.html" class="nav-item"><div class="nav-pip"></div><i class="fa-solid fa-receipt"></i>History</a>
+  <a href="settings.html" class="nav-item"><div class="nav-pip"></div><i class="fa-solid fa-key"></i>API</a>
+</div>
+
+<script>
+const API   = '';
+const token = localStorage.getItem('token');
+const user  = JSON.parse(localStorage.getItem('user') || '{}');
+if (!token) window.location.href = 'index.html';
+
+let receiverMobile = '';
+
+function showMsg(text, type) { const m = document.getElementById('msg'); m.textContent = text; m.className = 'msg '+type; }
+function setAmt(v) { document.getElementById('amount').value = v; document.querySelectorAll('.qa').forEach(q => q.classList.remove('sel')); event.target.classList.add('sel'); }
+
+async function lookup() {
+  const mobile = document.getElementById('receiver').value.trim();
+  if (!mobile || mobile.length < 10) return showMsg('Valid mobile number enter karo!', 'error');
+  try {
+    const r = await fetch(`${API}/transfer/lookup/${mobile}`, { headers:{'Authorization':'Bearer '+token} });
+    const d = await r.json();
+    if (d.status === 'success') {
+      receiverMobile = d.mobile;
+      document.getElementById('uf-av').textContent  = d.name[0].toUpperCase();
+      document.getElementById('uf-name').textContent = d.name;
+      document.getElementById('uf-mob').textContent  = d.mobile;
+      document.getElementById('user-found').classList.add('show');
+      document.getElementById('msg').className = 'msg';
+    } else { showMsg(d.message || 'User not found', 'error'); document.getElementById('user-found').classList.remove('show'); }
+  } catch(e) { showMsg('Network error', 'error'); }
+}
+
+async function sendMoney() {
+  if (!receiverMobile) return showMsg('Pehle receiver search karo!', 'error');
+  const amount  = document.getElementById('amount').value.trim();
+  const comment = document.getElementById('comment').value.trim();
+  if (!amount || parseFloat(amount) < 1) return showMsg('Minimum ₹1 enter karo!', 'error');
+  const btn = document.getElementById('send-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+  try {
+    const r = await fetch(`${API}/transfer/send`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({ receiver_mobile:receiverMobile, amount, comment })
+    });
+    const d = await r.json();
+    if (d.status === 'success') {
+      // Voice alert
+      if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance(`${d.receiver.name} ko ₹${d.amount} payment successful`);
+        msg.lang = 'hi-IN'; msg.rate = 1; window.speechSynthesis.speak(msg);
+      }
+      document.getElementById('r-amt').textContent    = d.amount;
+      document.getElementById('r-to').textContent     = d.receiver.name;
+      document.getElementById('r-name').textContent   = d.receiver.name;
+      document.getElementById('r-mobile').textContent = d.receiver.mobile;
+      document.getElementById('r-txid').textContent   = d.tx_id;
+      document.getElementById('receipt-modal').classList.add('open');
+    } else { showMsg(d.message || 'Transfer failed', 'error'); }
+  } catch(e) { showMsg('Network error', 'error'); }
+  btn.classList.remove('loading'); btn.disabled = false;
+}
+
+function resetForm() {
+  receiverMobile = '';
+  document.getElementById('receiver').value = '';
+  document.getElementById('amount').value   = '';
+  document.getElementById('comment').value  = '';
+  document.getElementById('user-found').classList.remove('show');
+  document.querySelectorAll('.qa').forEach(q => q.classList.remove('sel'));
+}
+
+document.getElementById('receiver').addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+</script>
+</body>
+</html>
